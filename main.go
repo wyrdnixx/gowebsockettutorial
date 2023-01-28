@@ -24,11 +24,11 @@ func main() {
 		ws.On("message2", func(e *Event) {
 			log.Printf("Message2 received: %s", e.Data.(string))
 
-			// own testanswer
-			//testansw := {"event":"testanswer" }
+			// own testanswer - return the string got from event
+
 			tst := new(Event)
 			tst.Name = "reply"
-			tst.Data = "success"
+			tst.Data = e.Data.(string)
 
 			b, _ := json.Marshal(tst)
 			ws.Out <- b
