@@ -3,6 +3,7 @@ package main
 // https://www.youtube.com/watch?v=norUcMSJRtQ
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 )
@@ -22,6 +23,16 @@ func main() {
 
 		ws.On("message2", func(e *Event) {
 			log.Printf("Message2 received: %s", e.Data.(string))
+
+			// own testanswer
+			//testansw := {"event":"testanswer" }
+			tst := new(Event)
+			tst.Name = "reply"
+			tst.Data = "success"
+
+			b, _ := json.Marshal(tst)
+			ws.Out <- b
+
 		})
 	})
 

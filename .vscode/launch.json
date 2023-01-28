@@ -8,8 +8,10 @@
             "name": "Launch Package",
             "type": "go",
             "request": "launch",
+            //"request": "run",
             "mode": "auto",
             "program": "main.go"
+   
         }
     ]
 }
