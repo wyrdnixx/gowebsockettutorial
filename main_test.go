@@ -21,12 +21,12 @@ func TestMain(m *testing.M) {
 
 var addrCLI = flag.String("addrCLI", "localhost:8080", "http service address")
 
-func TestServer(t *testing.T) {
+func TestServerReply(t *testing.T) {
 
-	fmt.Println("runiing...")
+	fmt.Println("running...")
 
 	testMessage := Event{
-		Name: "message",
+		Name: "TestMessageReply2",
 		Data: `this is test data`,
 	}
 

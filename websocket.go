@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 
@@ -22,6 +23,11 @@ type WebSocket struct {
 	Out    chan []byte
 	In     chan []byte
 	Events map[string]EventHandler
+}
+
+type errorMessage struct {
+	Name  string `json:"name"`
+	Error string `json:"error"`
 }
 
 func NewWebSocket(w http.ResponseWriter, r *http.Request) (*WebSocket, error) {
@@ -67,6 +73,15 @@ func (ws *WebSocket) Reader() {
 		}
 		if action, ok := ws.Events[event.Name]; ok {
 			action(event)
+		} else {
+			log.Printf("Websocket reader received unknown event or message from client: %v", bytes.NewBuffer(message).String())
+
+			x := new(errorMessage)
+			x.Name = "error"
+			x.Error = "Websocket reader received unknown event or message from client"
+
+			ws.Conn.WriteJSON(x)
+
 		}
 	}
 }
