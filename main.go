@@ -28,10 +28,48 @@ func main() {
 
 			tst := new(Event)
 			tst.Name = "reply"
-			tst.Data = e.Data.(string)
+			//tst.Data = e.Data.(string)
+			//b, _ := json.Marshal(tst)
 
-			b, _ := json.Marshal(tst)
-			ws.Out <- b
+			type Answer struct {
+				Name string `json:"name"`
+				//Data map[string]interface{}
+				Data map[string]interface{}
+			}
+
+			aw := new(Answer)
+			aw.Name = "reply"
+
+			type foo struct {
+				X     string `json:"X"`
+				Y     string `json:"Y"`
+				Z     string `json:"Z"`
+				Reply string `json:"reply"`
+			}
+
+			dt := new(foo)
+			dt.Reply = e.Data.(string)
+			dt.X = "X"
+			dt.Y = "Y"
+
+			// dat := map[string]interface{}{
+
+			// 	"X":     "a",
+			// 	"Y":     "b",
+			// 	"Z":     "c",
+			// 	"reply": e.Data.(string),
+			// }
+
+			// warum geht das so, aber direkt dt in Answer.Data nicht?
+			dat2 := map[string]interface{}{
+				"values": dt,
+			}
+
+			//aw.Data = dat
+			aw.Data = dat2
+			jAW, _ := json.Marshal(aw)
+
+			ws.Out <- jAW
 
 		})
 	})
