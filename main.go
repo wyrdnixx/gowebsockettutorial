@@ -6,11 +6,14 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
 
 	log.Println("Starting app")
+
+	http.Handle("/", http.FileServer(http.Dir("./assets")))
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		ws, err := NewWebSocket(w, r)
@@ -19,6 +22,13 @@ func main() {
 		}
 		ws.On("message", func(e *Event) {
 			log.Printf("Message received: %s", e.Data.(string))
+
+			// create event and just send the message back
+			ws.Out <- (&Event{
+				Name: "response",
+				//Data: e.Data.(string)
+				Data: strings.ToUpper(e.Data.(string)),
+			}).Raw()
 		})
 
 		ws.On("message2", func(e *Event) {
