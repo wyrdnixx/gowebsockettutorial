@@ -26,11 +26,8 @@ func TestServer(t *testing.T) {
 	fmt.Println("runiing...")
 
 	testMessage := Event{
-		Name: "message2",
-		Data: `{
-			"build":"0.1",
-			"testdata": "47"
-			}`,
+		Name: "message",
+		Data: `this is test data`,
 	}
 
 	u := url.URL{Scheme: "ws", Host: *addrCLI, Path: "/ws"}
@@ -46,5 +43,18 @@ func TestServer(t *testing.T) {
 		t.Fatalf(`Sendmessage got error : %v  `, err)
 
 	}
+	_, message, err := ws.ReadMessage()
+	if err != nil {
+		t.Fatalf("error reading reply message: %v", err)
+	} else {
+		expextedReply := `{"event":"response","data":"THIS IS TEST DATA"}`
+		if string(message) != expextedReply {
+			t.Fatalf("expected response : %v , got isntead: %v", expextedReply, string(message))
+		}
+
+		log.Printf("returned correct: %v", string(message))
+	}
+
+	//err := json.Unmarshal(message,m)
 
 }
