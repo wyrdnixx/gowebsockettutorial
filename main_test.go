@@ -31,7 +31,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestWs(t *testing.T) {
+func TestWsEchoMessage(t *testing.T) {
 	testMessage := Event{
 		Name: "TestMessageReply",
 		Data: `this is test data`,
@@ -52,6 +52,37 @@ func TestWs(t *testing.T) {
 	} else {
 		expextedReply := `{"event":"response","data":"THIS IS TEST DATA"}`
 		if string(message) != expextedReply {
+			t.Fatalf("expected response : %v , got isntead: %v", expextedReply, string(message))
+		}
+
+		t.Logf("returned correct: %v", string(message))
+	}
+
+}
+
+func TestWsWrongEvengtMessage(t *testing.T) {
+	testMessage := Event{
+		Name: "WrongEvent",
+		Data: `this is test data`,
+	}
+	err := ws.WriteMessage(1, testMessage.Raw())
+
+	if err != nil {
+		//t.Fatalf(`Sendmessage got : %v,  "", error`, err)
+		t.Fatalf(`Sendmessage got error : %v  `, err)
+
+	} else {
+		t.Log("testWS succeded")
+	}
+
+	_, message, err := ws.ReadMessage()
+	if err != nil {
+		t.Fatalf("error reading reply message: %v", err)
+	} else {
+		expextedReply := `{"name":"error","error":"Websocket reader received unknown event or message from client"}`
+		t.Logf("Msg:%v:", string(message))
+		t.Logf("Exp:%v:", expextedReply)
+		if string(message) != string(expextedReply) {
 			t.Fatalf("expected response : %v , got isntead: %v", expextedReply, string(message))
 		}
 
