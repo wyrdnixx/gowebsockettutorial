@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -80,7 +81,9 @@ func (ws *WebSocket) Reader() {
 			x.Name = "error"
 			x.Error = "Websocket reader received unknown event or message from client"
 
-			ws.Conn.WriteJSON(x)
+			//ws.Conn.WriteJSON(x)
+			raw, _ := json.Marshal(x)
+			ws.Out <- raw
 
 		}
 	}
