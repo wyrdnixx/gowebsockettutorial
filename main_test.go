@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -90,41 +91,43 @@ func TestWsWrongEvengtMessage(t *testing.T) {
 	}
 
 }
+func TestWsEchoMessageNested(t *testing.T) {
 
-// func TestServerReply(t *testing.T) {
+	type tstData struct {
+		Name string `json:Name`
+		Data struct {
+			Game   int16  `json:Value`
+			Status string `json:Value`
+		}
+	}
 
-// 	fmt.Println("running...")
+	tst := tstData{}
+	tst.Name = "TestMessageReply"
+	tst.Data.Game = 1
+	tst.Data.Status = "Init"
 
-// 	testMessage := Event{
-// 		Name: "TestMessageReply2",
-// 		Data: `this is test data`,
-// 	}
+	raw, _ := json.Marshal(tst)
 
-// 	u := url.URL{Scheme: "ws", Host: *addrCLI, Path: "/ws"}
-// 	log.Printf("connecting to %s", u.String())
+	err := ws.WriteMessage(1, raw)
 
-// 	ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// 	err = ws.WriteMessage(1, testMessage.Raw())
-// 	if err != nil {
-// 		//t.Fatalf(`Sendmessage got : %v,  "", error`, err)
-// 		t.Fatalf(`Sendmessage got error : %v  `, err)
+	if err != nil {
+		//t.Fatalf(`Sendmessage got : %v,  "", error`, err)
+		t.Fatalf(`Sendmessage got error : %v  `, err)
 
-// 	}
-// 	_, message, err := ws.ReadMessage()
-// 	if err != nil {
-// 		t.Fatalf("error reading reply message: %v", err)
-// 	} else {
-// 		expextedReply := `{"event":"response","data":"THIS IS TEST DATA"}`
-// 		if string(message) != expextedReply {
-// 			//t.Fatalf("expected response : %v , got isntead: %v", expextedReply, string(message))
-// 		}
+	} else {
+		t.Log("testWS succeded")
+	}
 
-// 		log.Printf("returned correct: %v", string(message))
-// 	}
+	_, message, err := ws.ReadMessage()
+	if err != nil {
+		t.Fatalf("error reading reply message: %v", err)
+	} else {
+		expextedReply := `{"event":"response","data":"THIS IS TEST DATA"}`
+		if string(message) != expextedReply {
+			t.Fatalf("expected response : %v , got isntead: %v", expextedReply, string(message))
+		}
 
-// 	//err := json.Unmarshal(message,m)
+		t.Logf("returned correct: %v", string(message))
+	}
 
-// }
+}

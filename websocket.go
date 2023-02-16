@@ -70,7 +70,7 @@ func (ws *WebSocket) Reader() {
 		if err != nil {
 			log.Printf("Error parsing message: %v", err)
 		} else {
-			//log.Printf("got message: %v", message)
+			log.Printf("got message: %v", bytes.NewBuffer(message).String())
 		}
 		if action, ok := ws.Events[event.Name]; ok {
 			action(event)
