@@ -94,15 +94,15 @@ func TestWsWrongEvengtMessage(t *testing.T) {
 func TestWsEchoMessageNested(t *testing.T) {
 
 	type tstData struct {
-		Name string `json:Name`
-		Data struct {
+		Event string `json:event`
+		Data  struct {
 			Game   int16  `json:Value`
 			Status string `json:Value`
 		}
 	}
 
 	tst := tstData{}
-	tst.Name = "TestMessageReply"
+	tst.Event = "SimpleOkResponse"
 	tst.Data.Game = 1
 	tst.Data.Status = "Init"
 
@@ -122,11 +122,12 @@ func TestWsEchoMessageNested(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error reading reply message: %v", err)
 	} else {
-		expextedReply := `{"event":"response","data":"THIS IS TEST DATA"}`
+		//expextedReply := `{"event":"response","data":"THIS IS TEST DATA"}`
+		expextedReply := `{"event":"response","data":"ok"}`
 		if string(message) != expextedReply {
 
 			// Temp disabled
-			//	t.Fatalf("expected response : %v , got isntead: %v", expextedReply, string(message))
+			t.Fatalf("expected response : %v , got isntead: %v", expextedReply, string(message))
 		}
 
 		t.Logf("returned correct: %v", string(message))
